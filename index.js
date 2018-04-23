@@ -19,46 +19,34 @@ const options = {
 console.log('parsing file:', filename);
 var ast  = babylon.parse(file, options);
 
-// console.log(JSON.stringify(ast, null, "  "));
 
 
 
 
 
 const walk = require('babylon-walk');
-const _ = require('lodash');
 const util = require('util');
-// const recursive = require("recursive-readdir");
-//const ast = require('./ast.json');
-// const ast = require('./BulkActionGrowler.json');
-
-// const testFolder = './ai-ast/';
-// const fs = require('fs');
 
 
 const fullWordSet = new Set();
 
+runIt(ast);
+console.log('')
+console.log('');
 
-
-	runIt(ast);
-  	console.log('')
-	console.log('');
-
-	const arr = Array.from(fullWordSet).filter(s => {
-		return  ( s.charAt(0) !== '#'
-					&& s.charAt(0) !== '%'
-					&& s.charAt(0) !== '/'
-					&& !s.endsWith('px')
-					&& !s.endsWith('em')
-				);
-	}).sort();
-	const formatedRes = arr.reduce((acc, val) => {
-		acc[val] = val;
-		return acc;
-	}, {});
-	// console.log('Target file: ', TARGET);
-	console.log(JSON.stringify(formatedRes, null, '\t'));
-// })
+const arr = Array.from(fullWordSet).filter(s => {
+	return  ( s.charAt(0) !== '#'
+				&& s.charAt(0) !== '%'
+				&& s.charAt(0) !== '/'
+				&& !s.endsWith('px')
+				&& !s.endsWith('em')
+			);
+}).sort();
+const formatedRes = arr.reduce((acc, val) => {
+	acc[val] = val;
+	return acc;
+}, {});
+console.log(JSON.stringify(formatedRes, null, '\t'));
 
 function runIt(ast) {
 	const jsxTextNodes = [];
@@ -103,11 +91,6 @@ function runIt(ast) {
 
 	}
 
-	//JSXAttribute -> check for spaces, if has spaces... it's a string?
-	//JSXIdentifier -> check if it's classnames
-
-
-	//StringLiteral -> check if parent is JSXIdentifier=>className
 
 	function looksLikeAClassName(str) {
 		return (/^[a-z\-]+$/.test(str.trim()) && str.indexOf('-') > -1);
@@ -133,9 +116,6 @@ function runIt(ast) {
 			return true;
 		}
 
-		//parent.type === ArrayExpression 
-		//&&
-		//grandParent.type === CallExpression && grandParent.callee.property.name === 'getIn' || 'setIn'
 
 		
 		if(parent.type === 'ArrayExpression') {
@@ -162,7 +142,6 @@ function runIt(ast) {
 			}
 		}
 
-		// console.log('parent ', parent.type, parentName );
 		switch (parent.type){
 			
 			case 'JSXAttribute':
@@ -175,7 +154,6 @@ function runIt(ast) {
 			case 'ImportDeclaration':
 				return true;
 			case 'ClassProperty':
-				// console.log(parent);
 				return parent.key.name === 'displayName';
 			case 'CallExpression':
 				return parent.callee.name === 'classnames';
@@ -210,10 +188,8 @@ function runIt(ast) {
 			
 		},
 		JSXText(node, state, ancestors) {
-	//		console.log('JSXText', node);
 			const val = '' + (node.value || '').replace('\\n', '').replace('\\t', '').trim();
 			if(val) {
-				// console.log('jsxText', val);
 				fullWordSet.add(val);
 				jsxTextNodes.push(`${node.loc.start.line}:${node.loc.start.column} -- ${val}`);
 			}
@@ -221,7 +197,6 @@ function runIt(ast) {
 
 	};
 
-	// const ast = require(`./${file}`);
 
 	walk.ancestor(ast, visitors, state);
 

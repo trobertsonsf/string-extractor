@@ -43,7 +43,6 @@ const fullWordSet = new Set();
 	runIt(ast);
   	console.log('')
 	console.log('');
-	console.log('full word set', fullWordSet)
 
 	const arr = Array.from(fullWordSet).filter(s => {
 		return  ( s.charAt(0) !== '#'
@@ -53,7 +52,6 @@ const fullWordSet = new Set();
 					&& !s.endsWith('em')
 				);
 	}).sort();
-	console.log('arr', arr)
 	const formatedRes = arr.reduce((acc, val) => {
 		acc[val] = val;
 		return acc;

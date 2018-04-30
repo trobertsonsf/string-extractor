@@ -121,12 +121,15 @@ function runIt(ast) {
 		if(parent.type === 'ArrayExpression') {
 			const grandParent = ancestors[ancestors.length - 3];
 			if(grandParent.type === 'CallExpression') {
+                                
+				if (grandParent && grandParent.callee && grandParent.callee.property ) {
+					const ret =  grandParent.callee.property.name === 'getIn' ||
+						grandParent.callee.property.name === 'setIn'
 
-				const ret =  grandParent.callee.property.name === 'getIn' ||
-					grandParent.callee.property.name === 'setIn'
-
-				console.log('skipping getIn calls', ret)
-				if(ret) return true;
+					console.log('skipping getIn calls', ret)
+					if(ret) return true;
+				}	
+				
 			}
 		}
 

@@ -19,11 +19,6 @@ const options = {
 console.log('parsing file:', filename);
 var ast  = babylon.parse(file, options);
 
-
-
-
-
-
 const walk = require('babylon-walk');
 const util = require('util');
 
@@ -167,10 +162,15 @@ function runIt(ast) {
 	}
 
 
+		const searchFor = 'This item was dimissed by'
 	const visitors = {
 
 		StringLiteral(node, state, ancestors) {
 			// console.log("");
+			if(node.value.trim().indexOf(searchFor) !== -1 ) {
+				console.log('matching node', node);
+//				console.log('matching ', ancestors );
+			}
 			// if(node.value.trim() === 'CrmRecordFormSelect _onChange expected an HTMLSelectElement with an HTMLOptionElement at selectedIndex, but did not find one') {
 				
 			// 	debugger;
@@ -196,7 +196,16 @@ function runIt(ast) {
 				fullWordSet.add(val);
 				jsxTextNodes.push(`${node.loc.start.line}:${node.loc.start.column} -- ${val}`);
 			}
-		}
+			if(val.indexOf(searchFor) !== -1 ) {
+                                console.log('matching node', node);
+//                              console.log('matching ', ancestors );
+                        }
+		},
+		TemplateElement(node, state, ancestors) {
+			//console.log('node', node, 'ancestor', ancestors[ancestors.length - 2]);
+			const val = node.value.raw.trim();
+			fullWordSet.add(val);	
+		},
 
 	};
 

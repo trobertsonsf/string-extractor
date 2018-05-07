@@ -83,6 +83,8 @@ function runIt(ast) {
 		'conversationUIStateMap': true,
 		'uiStateMap': true,
 		'radio': true,
+		'sf-Dropdown': true,
+		'sf-Modal': true,
 
 	}
 
